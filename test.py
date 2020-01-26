@@ -1,3 +1,4 @@
-import math
-x = math.sin(90)
-print(x)
+track1 = ['hello', 'me']
+track2 = []
+track1.pop()
+print(track1)
