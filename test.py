@@ -1,4 +1,4 @@
-track1 = ['hello', 'me']
-track2 = []
-track1.pop()
-print(track1)
+myList = ['Miss', 'Wallace', 'is', 'a', 'fucking', 'mug']
+
+for i in myList[(1:2), (4:6)]:
+    print(i)

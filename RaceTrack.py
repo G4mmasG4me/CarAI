@@ -67,10 +67,10 @@ class Track():
 
     def drawTrack(self):
         display.fill(white)
-        for wall1 in self.track1:
-            pygame.draw.line(display, black, wall1[0], wall1[1])
-        for wall2 in self.track2:
-            pygame.draw.line(display, black, wall2[0], wall2[1])
+        for wall in self.track1:
+            pygame.draw.line(display, black, wall[0], wall[1])
+        for wall in self.track2:
+            pygame.draw.line(display, black, wall[0], wall[1])
 
     def removeLast(self):
         if self.currentTrack:
