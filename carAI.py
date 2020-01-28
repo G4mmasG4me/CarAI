@@ -16,8 +16,11 @@ green = (0,255,0)
 blue = (0,0,255)
 
 class Interception():
-    def update():
-        for i in sensors[]
+    def update(sensors):
+        self.leftSensors = sensors.sensors
+        self.rightSensors = sensors.sensors
+
+
 
 class RaceTrack():
     def __init__(self):
@@ -35,21 +38,21 @@ class Car():
     def __init__(self):
         self.width = 10
         self.height = 25
-        self.x = (800 - self.width) / 2
-        self.y = (800 - self.height) / 2
+        self.x = 400
+        self.y = 400
         self.xSpeed = 0
         self.ySpeed = 0
-        self.angle = 0
+        self.angle = 45
         self.img = pygame.image.load('bugatti.png')
         self.img = pygame.transform.scale(self.img, (self.width, self.height))
         self.img = pygame.transform.rotate(self.img, self.angle)
-        self.rect = self.img.get_rect(topleft=(self.x, self.y))
+        self.rect = self.img.get_rect(center=(self.x, self.y))
 
     def update(self, MainRun):
         self.img = pygame.transform.scale(self.img, (self.width, self.height))
-        self.img = pygame.transform.rotate(self.img, self.angle)
-        self.rect = self.img.get_rect(topleft=(self.x, self.y))
-        MainRun.display.blit(self.img, (self.x, self.y))
+        self.img = pygame.transform.rotate(self.img, -self.angle)
+        self.rect = self.img.get_rect(center=(self.x, self.y))
+        MainRun.display.blit(self.img, (self.x - (self.width / 2), self.y - (self.height / 2)))
 
 class Sensors():
     def __init__(self, Car):
@@ -70,9 +73,7 @@ class Sensors():
         for i in self.sensors:
             self.x = round((math.cos(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][0], 0)
             self.y = round((math.sin(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][1], 0)
-            self.sensors[i][1][0] = self.x
-            self.sensors[i][1][1] = self.y
-            pygame.draw.line(MainRun.display, black, self.sensors[i][0], (self.sensors[i][1][0], self.sensors[i][1][1]))
+            pygame.draw.line(MainRun.display, black, self.sensors[i][0], (self.x, self.y))
 
     #def update(self, MainRun, Car):
 
