@@ -40,13 +40,20 @@ class Car():
         self.height = 25
         self.x = 400
         self.y = 400
-        self.xSpeed = 0
-        self.ySpeed = 0
-        self.angle = 45
+        self.speed = 0
+        self.angle = 0
         self.img = pygame.image.load('bugatti.png')
         self.img = pygame.transform.scale(self.img, (self.width, self.height))
         self.img = pygame.transform.rotate(self.img, self.angle)
         self.rect = self.img.get_rect(center=(self.x, self.y))
+
+    def speed(self):
+
+
+    def brake(self.)
+
+
+
 
     def update(self, MainRun):
         self.img = pygame.transform.scale(self.img, (self.width, self.height))
