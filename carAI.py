@@ -20,8 +20,6 @@ class Interception():
         self.leftSensors = sensors.sensors
         self.rightSensors = sensors.sensors
 
-
-
 class RaceTrack():
     def __init__(self):
         self.filename = 'trainingtrack.npz'
@@ -47,10 +45,10 @@ class Car():
         self.img = pygame.transform.rotate(self.img, self.angle)
         self.rect = self.img.get_rect(center=(self.x, self.y))
 
-    def speed(self):
+    #def speed(self):
 
 
-    def brake(self.)
+    #def brake(self)
 
 
 
@@ -73,14 +71,37 @@ class Sensors():
                         'left':[Car.rect.midbottom,(0,0),90],
                         'frontleft2':[Car.rect.bottomleft,(0,0),135],
                         'frontleft1':[Car.rect.bottomright,(0,0),45]}
-        self.length = 500
+
+    def coordinates(self):
+        cX = (Car.rect.topleft[0] + Car.rect.bottomright[0]) / 2
+        cY = (Car.rect.topleft[1] + Car.rect.bottomright[1]) / 2
+        tl = (((Car.rect.topleft[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.topleft[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.topleft[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.topleft[1] - cY) * math.cos(math.radians(Car.angle))))
+        tr = (((Car.rect.topright[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.topright[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.topright[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.topright[1] - cY) * math.cos(math.radians(Car.angle))))
+        br = (((Car.rect.bottomright[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.bottomright[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.bottomright[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.bottomright[1] - cY) * math.cos(math.radians(Car.angle))))
+        bl = (((Car.rect.bottomleft[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.bottomleft[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.bottomleft[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.bottomleft[1] - cY) * math.cos(math.radians(Car.angle))))
+        self.sensors[0][0] = ((tl[0] + tr[0]) / 2, (tl[1] + tr[1] / 2))
+        self.sensors[1][0] = ((tl[0] + tr[0]) / 2, (tl[1] + tr[1] / 2))
+        self.sensors[2][0] = tl
+        self.sensors[3][0] = tl
+        self.sensors[4][0] = ((tl[0] + tr[0]) / 2, (tl[1] + tr[1]) / 2)
+        self.sensors[5][0] = tr
+        self.sensors[6][0] = tr
+        self.sensors[7][0] = ((bl[0] + br[0]) / 2, (bl[1] + br[1]) / 2)
+        self.sensors[8][0] = bl
+        self.sensors[9][0] = br
+        #for i in self.sensors:
+            #self.startX =
+            #self.startY =
+        self.length = 200
         self.color = blue
 
     def createSensors(self, Car, MainRun):
         for i in self.sensors:
-            self.x = round((math.cos(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][0], 0)
-            self.y = round((math.sin(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][1], 0)
-            pygame.draw.line(MainRun.display, black, self.sensors[i][0], (self.x, self.y))
+            #self.startX =
+            #self.startY =
+            self.endX = round((math.cos(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][0], 0)
+            self.endY = round((math.sin(math.radians(self.sensors[i][2] + Car.angle)) * self.length) + self.sensors[i][0][1], 0)
+            pygame.draw.line(MainRun.display, black, self.sensors[i][0], (self.endX, self.endY))
 
     #def update(self, MainRun, Car):
 
