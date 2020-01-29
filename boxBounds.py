@@ -1,30 +1,17 @@
-from math import *
+import math
 
-#Box Coordinates
-topLeft = (0,0)
-topRight = (50,0)
-bottomRight = (50,100)
-bottomLeft = (0,100)
-boxRotation = 10
+cX = cY = 50
 
-w = bottomRight[0] - topLeft[0]
-h = bottomRight[1] - topLeft[1]
+x = y = 0
 
+theta = 90
 
-H = w * abs(sin(boxRotation)) + h * abs(cos(boxRotation))
-W = w * abs(cos(boxRotation)) + h * abs(sin(boxRotation))
-mathAs = abs(sin(boxRotation))
-mathCs = abs(cos(boxRotation))
+tempX = x - cX
+tempY = y - cY
 
-h = (H * mathCs - W * mathCs) / (mathCs**2 - mathAs**2)
-w = -(H * mathAs - W * mathCs) / (mathCs**2 - mathAs**2)
+rotatedX = (tempX * math.cos(math.radians(theta))) - (tempY * math.sin(math.radians(theta)))
+rotatedY = (tempX * math.sin(math.radians(theta))) + (tempY * math.cos(math.radians(theta)))
+print(rotatedX + cX)
+print(rotatedY + cY)
 
-XatTopEdge = w * mathCs      #(AE at the picture)
-YatRightEdge = h * mathCs    #(DH)
-XatBottomEdge = h * mathAs   #(BG)
-YatLeftEdge = w * mathAs     #(AF)
-
-print(XatTopEdge)
-print(YatRightEdge)
-print(XatBottomEdge)
-print(YatLeftEdge)
+import numpy as np
