@@ -79,12 +79,14 @@ class Sensors():
     def coordinates(self, Car):
         cX = (Car.rect.topleft[0] + Car.rect.bottomright[0]) / 2
         cY = (Car.rect.topleft[1] + Car.rect.bottomright[1]) / 2
+        print(cX)
+        print(cY)
         tl = (((Car.rect.topleft[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.topleft[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.topleft[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.topleft[1] - cY) * math.cos(math.radians(Car.angle))))
         tr = (((Car.rect.topright[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.topright[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.topright[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.topright[1] - cY) * math.cos(math.radians(Car.angle))))
         br = (((Car.rect.bottomright[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.bottomright[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.bottomright[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.bottomright[1] - cY) * math.cos(math.radians(Car.angle))))
         bl = (((Car.rect.bottomleft[0] - cX) * math.cos(math.radians(Car.angle))) - ((Car.rect.bottomleft[1] - cY) * math.sin(math.radians(Car.angle))), ((Car.rect.bottomleft[0] - cX) * math.sin(math.radians(Car.angle))) + ((Car.rect.bottomleft[1] - cY) * math.cos(math.radians(Car.angle))))
         self.sensors['front'][0] = (((tl[0] + tr[0]) / 2) + cX, ((tl[1] + tr[1]) / 2) + cY)
-        self.sensors['frontright1'][0] = (((tl[0] + tr[0]) / 2) + cX, ((tl[1] + tr[1]) / 2) + cY)
+        self.sensors['frontright1'][0] = ((( tr[0]) / 2) + cX, ((tl[1] + tr[1]) / 2) + cY)
         self.sensors['frontright2'][0] = (tl[0] + cX, tl[1] + cY)
         self.sensors['right'][0] = (tl[0] + cX, tl[1] + cY)
         self.sensors['backright1'][0] = (((tl[0] + tr[0]) / 2) + cX, ((tl[1] + tr[1]) / 2) + cY)
