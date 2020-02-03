@@ -1,38 +1,15 @@
-import pygame
+sensors = {'front':[(0,0),(0,0),-90],
+           'frontright1':[(0,0),(0,0),-110],
+           'frontright2':[(0,0),(0,0),-135],
+           'right':[(0,0),(0,0),180],
+           'backright1':[(0,0),(0,0),-70],
+           'back':[(0,0),(0,0),-45],
+           'backleft1':[(0,0),(0,0),0],
+           'left':[(0,0),(0,0),90],
+           'frontleft2':[(0,0),(0,0),135],
+           'frontleft1':[(0,0),(0,0),45]}
+leftSensors = [sensors['front'], sensors['frontleft1'], sensors['frontleft2'], sensors['left'], sensors['backleft1'], sensors['back']]
+leftSensors = [sensors['front'], sensors['frontright1'], sensors['frontright2'], sensors['right'], sensors['backright1'], sensors['back']]
 
-class Player(pygame.sprite.Sprite):
-
-    def __init__(self, pos=(0, 0), size=(200, 200)):
-        super(Player, self).__init__()
-        self.original_image = pygame.Surface(size)
-        pygame.draw.line(self.original_image, (255, 0, 255), (size[0] / 2, 0), (size[0] / 2, size[1]), 3)
-        pygame.draw.line(self.original_image, (0, 255, 255), (size[1], 0), (0, size[1]), 3)
-        self.image = self.original_image
-        self.rect = self.image.get_rect()
-        self.rect.center = pos
-        self.angle = 0
-
-    def update(self):
-        self.image = pygame.transform.rotate(self.original_image, self.angle)
-        self.angle += 1 % 360  # Value will reapeat after 359. This prevents angle to overflow.
-        x, y = self.rect.center  # Save its current center.
-        self.rect = self.image.get_rect()  # Replace old rect with new rect.
-        self.rect.center = (x, y)  # Put the new rect's center at old center.
-
-
-def main():
-    player = Player(pos=(200, 200))
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                raise SystemExit
-
-        player.update()
-        screen.fill((255, 255, 255))
-        screen.blit(player.image, player.rect)
-        pygame.display.update()
-
-if __name__ == '__main__':
-    pygame.init()
-    screen = pygame.display.set_mode((400, 400))
-    main()
+for i in leftSensors:
+    print(i)

@@ -63,6 +63,8 @@ class Track():
                 self.i = 2
             elif self.i == 2:
                 self.currentTrack[-1].append(mouse.pos)
+                self.currentTrack[-1].append((self.currentTrack[-1][0][0] - self.currentTrack[-1][1][0]) / (self.currentTrack[-1][0][1] - self.currentTrack[-1][1][1]))
+                self.currentTrack[1].append(self.currentTrack[-1][0][1] - (self.currentTrack[1][2] * self.currentTrack[1][0][0]))
                 self.i = 1
 
     def drawTrack(self):
