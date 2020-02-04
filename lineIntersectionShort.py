@@ -8,13 +8,27 @@ def line_intersection(line1, line2):
     div = det(xdiff, ydiff)
 
     d = (det(*line1), det(*line2))
-    print(line1)
-    print(*line1)
     try:
         x = det(d, xdiff) / div
         y = det(d, ydiff) / div
+        line2Xmin = min(line2[0][0], line2[1][0])
+        line2Xmax = max(line2[0][0], line2[1][0])
+
+        line2Ymin = min(line2[0][1], line2[1][1])
+        line2Ymax = max(line2[0][1], line2[1][1])
+        print('X:', line2Xmin, '-', line2Xmax)
+        print('Y:', line2Ymin, '-', line2Ymax)
+        if x >= line2Xmin and x <= line2Ymax and y >= line2Ymin and y <= line2Ymax:
+            print('In Range')
+        yRan = range(line2Ymin, line2Ymax)
+        x = round(x, 0)
+        x = int(x)
+        print(x in xRan)
+
         return x, y
     except:
         return 'Does Not Intercept'
 
-print(line_intersection(((80,100), (80,200)), ((200,50), (200,150))))
+print(line_intersection(((80,100), (150,200)), ((200,50), (100,200))))
+#line 1 sensor
+#line 2 wall

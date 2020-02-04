@@ -38,7 +38,7 @@ class Sensors():
                         'frontleft1':[(0,0),(0,0),45,(0,0),0]}
         self.leftSensors = [self.sensors['front'], self.sensors['frontleft1'], self.sensors['frontleft2'], self.sensors['left'], self.sensors['backleft1'], self.sensors['back']]
         self.rightSensors = [self.sensors['front'], self.sensors['frontright1'], self.sensors['frontright2'], self.sensors['right'], self.sensors['backright1'], self.sensors['back']]
-        self.length = 800
+        self.length = 100
         self.color = blue
 
 
@@ -60,10 +60,10 @@ class Sensors():
 
 
 
-    def interceptCalculation(self, line1, line2):
+    def interceptCalculation(self, line1, line2, sensor):
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
-        print(line2[0][0] - line2[1][0])
+
         xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
         ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
 
@@ -74,24 +74,46 @@ class Sensors():
         x = det(d, xdiff) / div
         y = det(d, ydiff) / div
         if math.isnan(x) or math.isinf(x) or math.isnan(y) or math.isinf(y):
-            x = -0
-            y = -0
-        x = round(x, 0)
-        y = round(y, 0)
+            x = 0
+            y = 0
+        x = int(round(x, 0))
+        y = int(round(y, 0))
 
-        if x not in range(min(int(line1[0][0]), int(line1[1][0])), max(int(line1[0][0]), int(line1[0][1]))) and y not in range(min(int(line1[0][1]), int(line1[1][1])), max(int(line1[0][1]), int(line2[1][1]))):
-            x = -0
-            y = -0
+        line1Xmin = min(int(line1[0][0]), int(line1[1][0]))
+        line1Xmax = max(int(line1[0][0]), int(line1[1][0]))
+        line1Ymin = min(int(line1[0][1]), int(line1[1][1]))
+        line1Ymax = max(int(line1[0][1]), int(line1[1][1]))
+        line2Xmin = min(int(line2[0][0]), int(line2[1][0]))
+        line2Xmax = max(int(line2[0][0]), int(line2[1][0]))
+        line2Ymin = min(int(line2[0][1]), int(line2[1][1]))
+        line2Ymax = max(int(line2[0][1]), int(line2[1][1]))
+
+        if x >= line1Xmin and x <= line1Xmax and y >= line1Ymin and y <= line1Ymax:
+            x = x
+            y = y
+        else:
+            x = 0
+            y = 0
+
+        if x >= line2Xmin and x <= line2Xmax and y >= line2Ymin and y <= line2Ymax:
+            x = x
+            y = y
+        else:
+            x = 0
+            y = 0
+        if x != 0 and y != 0:
+            print(self.sensors[sensor])
 
         return x, y
 
     def intercept(self, RaceTrack, Main):
         for trackLine in RaceTrack.track:
-            for sensorLine in self.sensors:
-                print(self.sensors[sensorLine][0])
-                intersect = self.interceptCalculation((tuple(trackLine[0]), tuple(trackLine[1])), (self.sensors[sensorLine][0], self.sensors[sensorLine][1]))
-                if isinstance(intersect[0], float) and isinstance(intersect[1], float):
-                    pygame.draw.circle(Main.display, red, (int(intersect[0]), int(intersect[1])), 8)
+            for sensor in self.sensors:
+                self.interceptCalculation((tuple(trackLine[0]), tuple(trackLine[1])), (self.sensors[sensor][0], self.sensors[sensor][1]), sensor)
+
+    def drawIntercept(self):
+        for sensor in self.sensors:
+            pygame.draw.circle(Main.display, red, self.sensors[sensor][3], 4)
 
     def createSensors(self, Main):
         for i in self.sensors:

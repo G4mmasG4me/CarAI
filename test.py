@@ -1,5 +1,6 @@
-list1 = [1,2,3,4]
-list2 = [5,6,7]
+unsortedlist =[['name1', 10], ['name2', 5], ['name3', 20], ['name4', 15]]
 
-for i in list1 + list2:
-    print(i)
+def Sort(unsortedList):
+    return(sorted(unsortedList, key = lambda x: x[1]))
+
+print(Sort(unsortedList))
