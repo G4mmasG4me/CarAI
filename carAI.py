@@ -17,34 +17,32 @@ blue = (0,0,255)
 
 class RaceTrack():
     def __init__(self):
-        self.filename = 'trainingtrack.npz'
-        self.tracks = np.load(self.filename, allow_pickle=True)
-        self.track1 = self.tracks['track1']
-        self.track2 = self.tracks['track2']
+        self.filename = 'trainingtrack.npy'
+        self.track = np.load(self.filename, allow_pickle=True)
+
     def update(self, MainRun):
-        for wall in self.track1:
-            pygame.draw.line(MainRun.display, black, wall[0], wall[1])
-        for wall in self.track2:
+        for wall in self.track:
             pygame.draw.line(MainRun.display, black, wall[0], wall[1])
 
 class Sensors():
-    def __init__(self, Car):#Start(0), End(1), Angle(2), Gradient(3), yIntercept(4), Intercept(5), Intercept Distance(6)
-        self.sensors = {'front':[(0,0),(0,0),-90,0,0,(0,0),0],
-                        'frontright1':[(0,0),(0,0),-110,0,0,(0,0),0],
-                        'frontright2':[(0,0),(0,0),-135,0,0,(0,0),0],
-                        'right':[(0,0),(0,0),180,0,0,(0,0),0],
-                        'backright1':[(0,0),(0,0),-70,0,0,(0,0),0],
-                        'back':[(0,0),(0,0),-45,0,0,(0,0),0],
-                        'backleft1':[(0,0),(0,0),0,0,0,(0,0),0],
-                        'left':[(0,0),(0,0),90,0,0,(0,0),0],
-                        'frontleft2':[(0,0),(0,0),135,0,0,(0,0),0],
-                        'frontleft1':[(0,0),(0,0),45,0,0,(0,0),0]}
+    def __init__(self, Car):#Start(0), End(1), Angle(2), Intercept(3), Intercept Distance(4)
+        self.sensors = {'front':[(0,0),(0,0),-90,(-0,-0),-0],
+                        'frontright1':[(0,0),(0,0),-110,(0,0),0],
+                        'frontright2':[(0,0),(0,0),-135,(0,0),0],
+                        'right':[(0,0),(0,0),180,(0,0),0],
+                        'backright1':[(0,0),(0,0),-70,(0,0),0],
+                        'back':[(0,0),(0,0),-45,(0,0),0],
+                        'backleft1':[(0,0),(0,0),0,(0,0),0],
+                        'left':[(0,0),(0,0),90,(0,0),0],
+                        'frontleft2':[(0,0),(0,0),135,(0,0),0],
+                        'frontleft1':[(0,0),(0,0),45,(0,0),0]}
         self.leftSensors = [self.sensors['front'], self.sensors['frontleft1'], self.sensors['frontleft2'], self.sensors['left'], self.sensors['backleft1'], self.sensors['back']]
-        self.rightSensors = [self.sensors['front'], self.sensors['frontright1'], sensors['frontright2'], self.sensors['right'], self.sensors['backright1'], self.sensors['back']]
-        self.length = 200
+        self.rightSensors = [self.sensors['front'], self.sensors['frontright1'], self.sensors['frontright2'], self.sensors['right'], self.sensors['backright1'], self.sensors['back']]
+        self.length = 800
         self.color = blue
 
-    def coordinates(self, Car):
+
+    def startCoord(self, Car):
         self.sensors['front'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
         self.sensors['frontright1'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
         self.sensors['frontright2'][0] = (Car.rotatedRectCorners[0][0], Car.rotatedRectCorners[0][1])
@@ -56,22 +54,54 @@ class Sensors():
         self.sensors['frontleft2'][0] = (Car.rotatedRectCorners[3][0], Car.rotatedRectCorners[3][1])
         self.sensors['frontleft1'][0] = (Car.rotatedRectCorners[2][0], Car.rotatedRectCorners[2][1])
 
-    def gradientyIntercept(self):
-        for i in self.sensors:
-            self.sensors[i][3] = (self.sensors[i][0][1] - self.sensors[i][1][1]) / (self.sensors[i][0][0] - self.sensors[i][1][0])
-            self.sensors[i][4] = self.sensors[i][0][1] - (self.sensors[i][3] * self.sensors[i][0][0])
-
-    def intercept(self):
-        for i in RaceTrack.track1:
-            for i in self.leftSensors:
-        for i in RaceTrack.track2:
-            for i in self.rightSensors:
-
-    def createSensors(self, Car, MainRun):
-        self.coordinates(Car)
+    def sensorValues(self, Car):
         for i in self.sensors:
             self.sensors[i][1] = ((round((math.cos(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][0], 0)), (round((math.sin(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][1], 0)))
-            pygame.draw.line(MainRun.display, black, self.sensors[i][0], self.sensors[i][1])
+
+
+
+    def interceptCalculation(self, line1, line2):
+        def det(a, b):
+            return a[0] * b[1] - a[1] * b[0]
+        print(line2[0][0] - line2[1][0])
+        xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+        ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
+
+        div = det(xdiff, ydiff)
+
+        d = (det(line1[0], line1[1]), det(line2[0], line2[1]))
+
+        x = det(d, xdiff) / div
+        y = det(d, ydiff) / div
+        if math.isnan(x) or math.isinf(x) or math.isnan(y) or math.isinf(y):
+            x = -0
+            y = -0
+        x = round(x, 0)
+        y = round(y, 0)
+
+        if x not in range(min(int(line1[0][0]), int(line1[1][0])), max(int(line1[0][0]), int(line1[0][1]))) and y not in range(min(int(line1[0][1]), int(line1[1][1])), max(int(line1[0][1]), int(line2[1][1]))):
+            x = -0
+            y = -0
+
+        return x, y
+
+    def intercept(self, RaceTrack, Main):
+        for trackLine in RaceTrack.track:
+            for sensorLine in self.sensors:
+                print(self.sensors[sensorLine][0])
+                intersect = self.interceptCalculation((tuple(trackLine[0]), tuple(trackLine[1])), (self.sensors[sensorLine][0], self.sensors[sensorLine][1]))
+                if isinstance(intersect[0], float) and isinstance(intersect[1], float):
+                    pygame.draw.circle(Main.display, red, (int(intersect[0]), int(intersect[1])), 8)
+
+    def createSensors(self, Main):
+        for i in self.sensors:
+            pygame.draw.line(Main.display, black, self.sensors[i][0], self.sensors[i][1])
+
+    def update(self, Car, RaceTrack, Main):
+        self.startCoord(Car)
+        self.sensorValues(Car)
+        self.intercept(RaceTrack, Main)
+        self.createSensors(Main)
 
 class Car():
     def __init__(self):
@@ -111,19 +141,19 @@ class Car():
         bl = (((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.cos(math.radians(-self.angle))) - ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.sin(math.radians(-self.angle))) + self.center[0], ((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.sin(math.radians(-self.angle))) + ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.cos(math.radians(-self.angle))) + self.center[1])
         self.rotatedRectCorners = [tl, tr, br, bl]
 
-    def drawRect(self, main):
-        pygame.draw.line(main.display, (255,0,0), self.rotatedRectCorners[0], self.rotatedRectCorners[1])
-        pygame.draw.line(main.display, (0,255,0), self.rotatedRectCorners[1], self.rotatedRectCorners[2])
-        pygame.draw.line(main.display, (0,0,255), self.rotatedRectCorners[2], self.rotatedRectCorners[3])
-        pygame.draw.line(main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
+    def drawRect(self, Main):
+        pygame.draw.line(Main.display, (255,0,0), self.rotatedRectCorners[0], self.rotatedRectCorners[1])
+        pygame.draw.line(Main.display, (0,255,0), self.rotatedRectCorners[1], self.rotatedRectCorners[2])
+        pygame.draw.line(Main.display, (0,0,255), self.rotatedRectCorners[2], self.rotatedRectCorners[3])
+        pygame.draw.line(Main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
 
-    def update(self, main):
+    def update(self, Main):
         self.speed()
         self.move()
         self.nonRotatedRect()
         self.rotatedRect()
-        self.drawRect(main)
-        main.display.blit(self.rotatedCar, self.carRect)
+        self.drawRect(Main)
+        Main.display.blit(self.rotatedCar, self.carRect)
 
 class Main():
     def __init__(self):
@@ -141,7 +171,8 @@ class Main():
         sensors = Sensors(car)
         raceTrack = RaceTrack()
         while self.running:
-            print('Mouse:', pygame.mouse.get_pos())
+            #print(self.clock.get_fps())
+            #print('Mouse:', pygame.mouse.get_pos())
             #print(car.velocity)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -170,10 +201,10 @@ class Main():
 
             self.display.fill((255,255,255))
             car.update(self)
-            sensors.createSensors(car, self)
+            sensors.update(car, raceTrack, self)
             raceTrack.update(self)
             pygame.display.update()
             self.clock.tick(60)
 
 if __name__ == '__main__':
-    main = Main()
+    Main = Main()

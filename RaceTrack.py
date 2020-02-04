@@ -46,25 +46,24 @@ class Track():
     def getTrack(self, mouse):
         if self.currentTrack: #if list not empty
             if self.currentTrack[-1][0]:
-                if choice1 == 2 and self.i == 2:
+                if choice2 == 2 and self.i == 2:
+                    print(self.currentTrack)
+                    print(self.currentTrack[-1])
                     self.currentTrack[-1][1] = mouse.pos
-                elif choice1 == 1:
+                elif choice2 == 1:
                     self.currentTrack[-1][1] = mouse.pos
 
     def placeTrack(self, mouse):
-        if choice1 == 1:
-            if self.currentTrack: #if not list empty
-                self.currentTrack[-1].append(mouse.pos)
+        print(self.currentTrack)
+        if choice2 == 1:
             self.currentTrack.append([mouse.pos, ()])
-        elif choice1 == 2:
-
+        elif choice2 == 2:
             if self.i == 1:
-                self.currentTrack.append([mouse.pos, ()])
+                self.currentTrack.append([mouse.pos])
+                self.currentTrack[-1].append([mouse.pos])
                 self.i = 2
             elif self.i == 2:
                 self.currentTrack[-1].append(mouse.pos)
-                self.currentTrack[-1].append((self.currentTrack[-1][0][0] - self.currentTrack[-1][1][0]) / (self.currentTrack[-1][0][1] - self.currentTrack[-1][1][1]))
-                self.currentTrack[1].append(self.currentTrack[-1][0][1] - (self.currentTrack[1][2] * self.currentTrack[1][0][0]))
                 self.i = 1
 
     def drawTrack(self):
@@ -73,6 +72,13 @@ class Track():
             pygame.draw.line(display, black, wall[0], wall[1])
         for wall in self.track2:
             pygame.draw.line(display, black, wall[0], wall[1])
+
+    """
+    def drawFinishedTrack(self):
+        display.fill(white)
+        for wall in self.track:
+            pygame.draw.line(display, black, wall[0], wall[1])
+    """
 
     def removeLast(self):
         if self.currentTrack:
@@ -96,7 +102,8 @@ class Track():
         else:
             if self.track2:
                 self.track2.pop()
-            np.savez(filename, track1 = self.track1, track2 = self.track2)
+            track = self.track1 + self.track2
+            np.save(filename, track)
             running = False
             quit()
             pygame.quit()
@@ -128,8 +135,13 @@ while running == True:
             elif event.key == pygame.K_BACKSPACE:
                 track.removeAll()
     mouse.getPos()
-    track.getTrack(mouse)
-    track.drawTrack()
-    text.update(mouse)
+    if choice1 == 1:
+        track.getTrack(mouse)
+        track.drawTrack()
+        text.update(mouse)
+    elif choice1 == 2:
+        track.drawTrack()
+        #track.drawFinishedTrack()
+        text.update(mouse)
     pygame.display.update()
     clock.tick(60)

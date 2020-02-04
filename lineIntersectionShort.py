@@ -1,20 +1,20 @@
-line1Start = (10, 20)
-line1End = (20, 30)
-line2Start = (10, 10)
-line2End = (20, 20)
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
 
-for i in range(60000):
-    line1Gradient = (line1Start[1] - line1End[1]) / (line1Start[0] - line1End[0])
-    line1yIntercept = line1Start[1] - (line1Gradient * line1Start[0])
+    def det(a, b):
+        return a[0] * b[1] - a[1] * b[0]
 
-    line2Gradient = (line2Start[1] - line2End[1]) / (line2Start[0] - line2End[0])
-    line2yIntercept = line2Start[1] - (line2Gradient * line2Start[0])
+    div = det(xdiff, ydiff)
 
-    print(line2yIntercept - line1yIntercept)
-    xIntercept = (line2yIntercept - line1yIntercept) / (line1Gradient - line2Gradient)
-    yIntercept = (line1Gradient * xIntercept) + line1yIntercept
-    xIntercept = round(xIntercept, 0)
-    yIntercept = round(yIntercept, 0)
-    intercept = (xIntercept, yIntercept)
-    print(intercept)
-    print(i)
+    d = (det(*line1), det(*line2))
+    print(line1)
+    print(*line1)
+    try:
+        x = det(d, xdiff) / div
+        y = det(d, ydiff) / div
+        return x, y
+    except:
+        return 'Does Not Intercept'
+
+print(line_intersection(((80,100), (80,200)), ((200,50), (200,150))))
