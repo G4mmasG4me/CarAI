@@ -44,7 +44,11 @@ class Sensors():
             return a[0] * b[1] - a[1] * b[0]
 
         for sensor in self.sensors:
-            for trackLine in RaceTrack.track:
+            self.sensors[sensor][3] = (1000,1000)
+            self.sensors[sensor][4] = 10000
+
+        for trackLine in RaceTrack.track:
+            for sensor in self.sensors:
                 xdiff = (trackLine[0][0] - trackLine[1][0], self.sensors[sensor][0][0] - self.sensors[sensor][1][0])
                 ydiff = (trackLine[0][1] - trackLine[1][1], self.sensors[sensor][0][1] - self.sensors[sensor][1][1])
 
@@ -77,8 +81,11 @@ class Sensors():
                     y = 0
 
                 intercept = (x, y)
-                pygame.draw.circle(Main.display, red, intercept, 4)
-                interceptDistance = math.sqrt((self.sensors[sensor][0][0] - intercept[0])**2 + (self.sensors[sensor][0][1] - intercept[1])**2)
+                if intercept != (0,0):
+                    interceptDistance = math.sqrt((self.sensors[sensor][0][0] - intercept[0])**2 + (self.sensors[sensor][0][1] - intercept[1])**2)
+                    if interceptDistance < self.sensors[sensor][4]:
+                        self.sensors[sensor][3] = intercept
+                        self.sensors[sensor][4] = interceptDistance
 
     def drawIntercept(self, Main):
         for sensor in self.sensors:
@@ -92,5 +99,5 @@ class Sensors():
         self.startCoord(Car)
         self.sensorValues(Car)
         self.intercept(RaceTrack, Main)
-        #self.drawIntercept(Main)
+        self.drawIntercept(Main)
         self.createSensors(Main)

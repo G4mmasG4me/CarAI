@@ -26,6 +26,7 @@ class Main():
         self.display = pygame.display.set_mode((self.displayWidth,self.displayHeight))
         pygame.display.set_caption(self.title)
         self.clock = pygame.time.Clock()
+        self.deltatime = self.clock.tick(60)
         self.running = True
         self.main()
 
@@ -36,7 +37,8 @@ class Main():
         while self.running:
             #print(self.clock.get_fps())
             #print('Mouse:', pygame.mouse.get_pos())
-            #print(car.velocity)
+            print(car.velocity)
+            #print(self.deltatime)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -50,11 +52,11 @@ class Main():
                     car.velocity += car.accelerate
             if keys[pygame.K_LEFT]:
                 if car.velocity != 0:
-                    car.angle += car.steeringAngle
+                    car.angle += car.steeringAngle * self.deltatime
                     car.brake += car.steeringBrake
             if keys[pygame.K_RIGHT]:
                 if car.velocity != 0:
-                    car.angle -= car.steeringAngle
+                    car.angle -= car.steeringAngle * self.deltatime
                     car.brake += car.steeringBrake
             if keys[pygame.K_DOWN]:
                 if car.velocity > 0:
@@ -67,7 +69,7 @@ class Main():
             sensors.update(car, raceTrack, self)
             raceTrack.update(self)
             pygame.display.update()
-            self.clock.tick(60)
+            self.deltatime = self.clock.tick(60)
 
 if __name__ == '__main__':
     Main = Main()

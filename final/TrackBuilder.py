@@ -39,9 +39,7 @@ class Track():
         self.currentTrack = self.track1
         self.i = 1
         if choice1 == 2:
-            tracks = np.load(filename + '.npz', allow_pickle=True)
-            self.track1 = tracks['track1']
-            self.track2 = tracks['track2']
+            self.track = np.load('tracks/' + filename + '.npy', allow_pickle=True)
 
     def getTrack(self, mouse):
         if self.currentTrack: #if list not empty
@@ -73,12 +71,10 @@ class Track():
         for wall in self.track2:
             pygame.draw.line(display, black, wall[0], wall[1])
 
-    """
     def drawFinishedTrack(self):
         display.fill(white)
         for wall in self.track:
             pygame.draw.line(display, black, wall[0], wall[1])
-    """
 
     def removeLast(self):
         if self.currentTrack:
@@ -125,10 +121,12 @@ while running == True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 print("Left Mouse Button Down")
-                track.placeTrack(mouse)
+                if choice1 == 1:
+                    track.placeTrack(mouse)
             elif event.button == 3:
                 print("Right Mouse Button Down")
-                track.removeLast()
+                if choice1 == 1:
+                    track.removeLast()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 track.saveOrSwapTrack()
@@ -140,8 +138,7 @@ while running == True:
         track.drawTrack()
         text.update(mouse)
     elif choice1 == 2:
-        track.drawTrack()
-        #track.drawFinishedTrack()
+        track.drawFinishedTrack()
         text.update(mouse)
     pygame.display.update()
     clock.tick(60)

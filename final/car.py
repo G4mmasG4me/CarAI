@@ -17,13 +17,13 @@ class Car():
         self.velocity = 0
         self.brake = 0
 
-        self.accelerate = 0.02
-        self.decelerate = 0.01
-        self.steeringAngle = 2
-        self.steeringBrake = 0.001
-        self.accelerateBrake = 0.02
-        self.decelerateBrake = 0.02
-        self.naturalBrake = 0.005
+        self.accelerate = 0.002
+        self.decelerate = 0.001
+        self.steeringAngle = 0.075
+        self.steeringBrake = 0.0001
+        self.accelerateBrake = 0.002
+        self.decelerateBrake = 0.002
+        self.naturalBrake = 0.0005
 
     def speed(self):
         if self.velocity > 0:
@@ -32,11 +32,11 @@ class Car():
             self.velocity += self.brake
         self.brake = self.naturalBrake
 
-    def move(self):
-        self.velocity = 0.005 * round(self.velocity/0.005)
-        self.velocity = round(self.velocity, 3)
-        self.x += math.cos(math.radians(-self.angle-90)) * self.velocity
-        self.y += math.sin(math.radians(-self.angle-90)) * self.velocity
+    def move(self, Main):
+        self.velocity = 0.0005 * round(self.velocity/0.0005)
+        self.velocity = round(self.velocity, 5)
+        self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
+        self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
 
     def nonRotatedRect(self):
         self.center = self.carImg.get_rect().center
@@ -62,7 +62,7 @@ class Car():
 
     def update(self, Main):
         self.speed()
-        self.move()
+        self.move(Main)
         self.nonRotatedRect()
         self.rotatedRect()
         self.drawRect(Main)
