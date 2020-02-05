@@ -1,6 +1,5 @@
-unsortedlist =[['name1', 10], ['name2', 5], ['name3', 20], ['name4', 15]]
+velocity = 1.027
 
-def Sort(unsortedList):
-    return(sorted(unsortedList, key = lambda x: x[1]))
+velocity = 0.005 * round(velocity/0.005)
 
-print(Sort(unsortedList))
+print(velocity)

@@ -1,23 +1,42 @@
 import pygame
-import time
 import math
 
-running = True
+black = (0,0,0)
+white = (255,255,255)
+red = (255,0,0)
+green = (0,255,0)
+blue = (0,0,255)
 
 class Car():
     def __init__(self):
-        self.x = 100
-        self.y = 100
-        self.carImg = pygame.image.load('bugatti.png')
-        self.carImg = pygame.transform.scale(self.carImg, (400, 800))
-        self.angle = 45
+        self.x = 75
+        self.y = 400
+        self.carImg = pygame.image.load('images/bugatti.png')
+        self.carImg = pygame.transform.scale(self.carImg, (10, 20))
+        self.angle = 0
         self.velocity = 0
+        self.brake = 0
+
+        self.accelerate = 0.02
+        self.decelerate = 0.01
+        self.steeringAngle = 2
+        self.steeringBrake = 0.001
+        self.accelerateBrake = 0.02
+        self.decelerateBrake = 0.02
+        self.naturalBrake = 0.005
+
+    def speed(self):
+        if self.velocity > 0:
+            self.velocity -= self.brake
+        elif self.velocity < 0:
+            self.velocity += self.brake
+        self.brake = self.naturalBrake
 
     def move(self):
-        self.velocity = round(self.velocity, 2)
+        self.velocity = 0.005 * round(self.velocity/0.005)
+        self.velocity = round(self.velocity, 3)
         self.x += math.cos(math.radians(-self.angle-90)) * self.velocity
         self.y += math.sin(math.radians(-self.angle-90)) * self.velocity
-        print(self.velocity)
 
     def nonRotatedRect(self):
         self.center = self.carImg.get_rect().center
@@ -35,52 +54,16 @@ class Car():
         bl = (((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.cos(math.radians(-self.angle))) - ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.sin(math.radians(-self.angle))) + self.center[0], ((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.sin(math.radians(-self.angle))) + ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.cos(math.radians(-self.angle))) + self.center[1])
         self.rotatedRectCorners = [tl, tr, br, bl]
 
-    def drawRect(self, main):
-        pygame.draw.line(main.display, (255,0,0), self.rotatedRectCorners[0], self.rotatedRectCorners[1])
-        pygame.draw.line(main.display, (0,255,0), self.rotatedRectCorners[1], self.rotatedRectCorners[2])
-        pygame.draw.line(main.display, (0,0,255), self.rotatedRectCorners[2], self.rotatedRectCorners[3])
-        pygame.draw.line(main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
+    def drawRect(self, Main):
+        pygame.draw.line(Main.display, (255,0,0), self.rotatedRectCorners[0], self.rotatedRectCorners[1])
+        pygame.draw.line(Main.display, (0,255,0), self.rotatedRectCorners[1], self.rotatedRectCorners[2])
+        pygame.draw.line(Main.display, (0,0,255), self.rotatedRectCorners[2], self.rotatedRectCorners[3])
+        pygame.draw.line(Main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
 
-    def update(self, main):
+    def update(self, Main):
+        self.speed()
         self.move()
         self.nonRotatedRect()
         self.rotatedRect()
-        self.drawRect(main)
-        main.display.blit(self.rotatedCar, self.carRect)
-
-
-class Main():
-    def __init__(self):
-        self.displayWidth = 800
-        self.displayHeight = 800
-        self.display = pygame.display.set_mode((self.displayWidth,self.displayHeight))
-        self.clock = pygame.time.Clock()
-        self.running = True
-        self.main()
-
-
-    def main(self):
-        car = Car()
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    pygame.quit()
-                    quit()
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP]:
-                car.velocity += 0.1
-            if keys[pygame.K_LEFT]:
-                car.angle += 1
-            if keys[pygame.K_RIGHT]:
-                car.angle -= 1
-            if keys[pygame.K_DOWN]:
-                car.velocity -= 0.05
-
-            self.display.fill((255,255,255))
-            car.update(self)
-            pygame.display.update()
-            self.clock.tick(30)
-
-if __name__ == '__main__':
-    main = Main()
+        self.drawRect(Main)
+        Main.display.blit(self.rotatedCar, self.carRect)
