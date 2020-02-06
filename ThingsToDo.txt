@@ -25,3 +25,25 @@ Forwards
 Backwards
 Left
 Right
+
+---Epsilon---
+Exploration vs Exploitation
+1-0
+If the value is set to 1 it will only explore
+if the value is set to 0 it will only exploit what it knows
+
+---Learning Rate---
+It is a number between 0 and 1
+It is a measure of how quickly the agent will abandon the previous Q-Value
+
+---Components of an MDP---
+-Agent
+-Environment
+-State - What situation the agent is in
+-Action - What things the agent can do
+-Reward - Can be positive or negative
+
+---Q-Table---
+It is a lookup table for rewards associated with every state-action pair
+Each cell in this table records a value called a Q-Value
+representation of long-term reward an agent would receive if it takes this action
