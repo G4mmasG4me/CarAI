@@ -2,6 +2,26 @@ Add Check Points
 ----------
 Add Closest Intercept to List
 
-Reward System
+Reward Function
 -5 If it crashes into wall
 +1 If it goes through checkpoint
+
+Inputs
+Velocity
+Angle
+Front Sensor
+Front Right 1 Sensor
+Front Right 2 Sensor
+Right Sensor
+Back Right Sensor
+Back Sensor
+Back Left Sensor
+Left Sensor
+Front Left 2 Sensor
+Front Left 1 Sensor
+
+---Outputs---
+Forwards
+Backwards
+Left
+Right

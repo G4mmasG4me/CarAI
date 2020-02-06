@@ -8,10 +8,12 @@ from sensors import Sensors
 pygame.init()
 #pygame.mixer.init()
 
+#Music to play
 file = 'TokyoDrift.mp3'
 #pygame.mixer.music.load(file)
 #pygame.mixer.music.play()
 
+#Colours
 black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)

@@ -1,6 +1,7 @@
 import pygame
 import math
 
+#Colours
 black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)
@@ -22,7 +23,7 @@ class Sensors():
         self.length = 600
         self.color = blue
 
-
+    #Sets the position of the start of the sensor
     def startCoord(self, Car):
         self.sensors['front'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
         self.sensors['frontright1'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
@@ -35,11 +36,14 @@ class Sensors():
         self.sensors['frontleft2'][0] = Car.rotatedRectCorners[0]
         self.sensors['frontleft1'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
 
+    #Sets the position of the end of the sensor
     def sensorValues(self, Car):
         for i in self.sensors:
             self.sensors[i][1] = ((round((math.cos(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][0], 0)), (round((math.sin(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][1], 0)))
 
+    #Calculates the intercept between the track and the sensor
     def intercept(self, RaceTrack, Main):
+        #Calculating function
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
 
@@ -87,14 +91,17 @@ class Sensors():
                         self.sensors[sensor][3] = intercept
                         self.sensors[sensor][4] = interceptDistance
 
+    #Draws the intercept point
     def drawIntercept(self, Main):
         for sensor in self.sensors:
             pygame.draw.circle(Main.display, red, self.sensors[sensor][3], 4)
 
+    #Draws the sensor line
     def createSensors(self, Main):
         for sensor in self.sensors:
             pygame.draw.line(Main.display, black, self.sensors[sensor][0], self.sensors[sensor][1])
 
+    #Calls all the functions
     def update(self, Car, RaceTrack, Main):
         self.startCoord(Car)
         self.sensorValues(Car)
