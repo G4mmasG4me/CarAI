@@ -19,10 +19,10 @@ class Car():
 
         self.accelerate = 0.002
         self.decelerate = 0.001
-        self.steeringAngle = 0.075
+        self.steeringAngle = 0.08
         self.steeringBrake = 0.0001
-        self.accelerateBrake = 0.002
-        self.decelerateBrake = 0.002
+        self.accelerateBrake = 0.001
+        self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
 
     def speed(self):

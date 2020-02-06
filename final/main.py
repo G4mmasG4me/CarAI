@@ -35,9 +35,9 @@ class Main():
         sensors = Sensors(car)
         raceTrack = RaceTrack()
         while self.running:
-            #print(self.clock.get_fps())
+            print(self.clock.get_fps())
             #print('Mouse:', pygame.mouse.get_pos())
-            print(car.velocity)
+            #print(car.velocity)
             #print(self.deltatime)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

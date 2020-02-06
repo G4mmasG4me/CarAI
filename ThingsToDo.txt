@@ -1,3 +1,7 @@
 Add Check Points
 ----------
 Add Closest Intercept to List
+
+Reward System
+-5 If it crashes into wall
++1 If it goes through checkpoint
