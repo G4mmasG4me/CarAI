@@ -67,7 +67,7 @@ class Main():
                     car.velocity -= car.decelerate
 
             self.display.fill(white)
-            car.update(self)
+            car.update(self, raceTrack)
             sensors.update(car, raceTrack, self)
             raceTrack.update(self)
             pygame.display.update()

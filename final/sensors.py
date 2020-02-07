@@ -90,6 +90,7 @@ class Sensors():
                     if interceptDistance < self.sensors[sensor][4]:
                         self.sensors[sensor][3] = intercept
                         self.sensors[sensor][4] = interceptDistance
+                        self.sensors[sensor][1] = intercept
 
     #Draws the intercept point
     def drawIntercept(self, Main):

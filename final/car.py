@@ -10,6 +10,8 @@ blue = (0,0,255)
 
 class Car():
     def __init__(self):
+        self.startX = 75
+        self.startY = 400
         self.x = 75
         self.y = 400
         self.carImg = pygame.image.load('images/bugatti.png')
@@ -27,6 +29,33 @@ class Car():
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
 
+    #Detects if it collides
+    def collision(self, RaceTrack):
+        for z, corner in enumerate(self.rotatedRectCorners):
+            for track in RaceTrack.track:
+                def ccw(A,B,C):
+                    return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
+
+                # Return true if line segments AB and CD intersect
+                def intersect(A,B,C,D):
+                    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+
+                next = z + 1
+                if next > len(self.rotatedRectCorners)-1:
+                    next -= 4
+                A = corner
+                B = self.rotatedRectCorners[next]
+                C = (track[0][0], track[0][1])
+                D = (track[1][0], track[1][1])
+
+                crash = intersect(A,B,C,D)
+                if crash == True:
+                    self.x = self.startX
+                    self.y = self.startY
+                    self.angle = 0
+                    self.velocity = 0
+                    print('You Crashed')
+
     #Applys the brake to the car
     def speed(self):
         if self.velocity > 0:
@@ -39,6 +68,7 @@ class Car():
     def move(self, Main):
         self.velocity = 0.0005 * round(self.velocity/0.0005)
         self.velocity = round(self.velocity, 5)
+        self.angle = round(self.angle, 2)
         self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
         self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
 
@@ -68,10 +98,12 @@ class Car():
         pygame.draw.line(Main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
 
     #Calls all the functions as well as blitting it to the screen
-    def update(self, Main):
-        self.speed()
-        self.move(Main)
-        self.nonRotatedRect()
-        self.rotatedRect()
-        self.drawRect(Main)
-        Main.display.blit(self.rotatedCar, self.carRect)
+    def update(self, Main, RaceTrack):
+        self.speed() #Gets velocity
+        self.move(Main) #Moves it
+        self.nonRotatedRect() #Gets the non rotated rect
+        self.rotatedRect() #Gets the rotated rect
+        self.collision(RaceTrack)
+        self.drawRect(Main) #Draws the rect
+        print(self.angle)
+        Main.display.blit(self.rotatedCar, self.carRect) #Displays it all

@@ -35,10 +35,11 @@ if the value is set to 0 it will only exploit what it knows
 ---Learning Rate---
 It is a number between 0 and 1
 It is a measure of how quickly the agent will abandon the previous Q-Value
+Can be referred to as Alpha
 
 ---Components of an MDP---
--Agent
--Environment
+-Agent - The algorithm/neural network
+-Environment - Where the agent exists
 -State - What situation the agent is in
 -Action - What things the agent can do
 -Reward - Can be positive or negative
@@ -47,3 +48,39 @@ It is a measure of how quickly the agent will abandon the previous Q-Value
 It is a lookup table for rewards associated with every state-action pair
 Each cell in this table records a value called a Q-Value
 representation of long-term reward an agent would receive if it takes this action
+
+---Variables---
+-Gamma - Discount factor - Lower values get better short term gains. Higher values get better long term gains.
+
+---Observation---
+0 : Angle
+1 : Speed
+2 : Front Sensor
+3 : Front Right 1 Sensor
+4 : Front Right 2 Sensor
+5 : Right Sensor
+6 : Back Right Sensor
+7 : Back Sensor
+8 : Back Left Sensor
+9 : Left Sensor
+10 : Front Left 2 Sensor
+11 : Front Left 1 Sensor
+
+---Actions---
+0 : rotate anti-clockwise
+1 : rotate clockwise
+2 : accelerate
+3 : decelerate
+
+---Reset---
+Restarts Environment
+
+--Step---
+Returns:
+-Observation
+-rewards
+-done
+-info
+
+--Render---
+Renders Environment
