@@ -6,8 +6,10 @@ alpha = 0.5 #learning rate
 gamma = 0.8
 
 #Sets Q table to all 0s
+state_size = 12
+action_size = 4
 Q = np.zeros((state_size, action_size))
-print(env.action_space)
+print(Q)
 
 #If random number between 0,1 is less that epsilon
 if random.uniform(0,1) < epsilon:

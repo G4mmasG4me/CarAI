@@ -29,19 +29,19 @@ class Car():
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
 
-    def action():
+    def action(self, choice):
         #accelerate
         if choice == 0:
-            if car.velocity < 0:
-                car.brake += car.accelerateBrake
+            if self.velocity < 0:
+                self.brake += self.accelerateBrake
             else:
-                car.velocity += car.accelerate
+                self.velocity += self.accelerate
         #decelerate
         if choice == 1:
-            if car.velocity > 0:
-                car.brake += car.decelerateBrake
+            if self.velocity > 0:
+                self.brake += self.decelerateBrake
             else:
-                car.velocity -= car.decelerate
+                self.velocity -= self.decelerate
         #turn left
         if choice == 2:
             if car.velocity != 0:
@@ -54,7 +54,7 @@ class Car():
                 car.brake += car.steeringBrake
 
     #Detects if it collides
-    def collision(self, RaceTrack):
+    def wallCollision(self, RaceTrack):
         for z, corner in enumerate(self.rotatedRectCorners):
             for track in RaceTrack.track:
                 def ccw(A,B,C):
@@ -66,19 +66,36 @@ class Car():
 
                 next = z + 1
                 if next > len(self.rotatedRectCorners)-1:
-                    next -= 4
+                    next -= len(self.rotatedRectCorners)
                 A = corner
                 B = self.rotatedRectCorners[next]
                 C = (track[0][0], track[0][1])
                 D = (track[1][0], track[1][1])
 
                 crash = intersect(A,B,C,D)
-                if crash == True:
-                    self.x = self.startX
-                    self.y = self.startY
-                    self.angle = 0
-                    self.velocity = 0
-                    print('You Crashed')
+                return crash
+
+    def checkpointCollision(self, RaceTrack):
+        for z, corner in enumerate(self.rotatedRectCorners):
+            for checkPoint in RaceTrack.checkPoint:
+                def ccw(A,B,C):
+                    return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
+
+                # Return true if line segments AB and CD intersect
+                def intersect(A,B,C,D):
+                    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+
+                next = z + 1
+                if next > len(self.rotatedRectCorners)-1:
+                    next -= len(self.rotatedRectCorners)
+                A = corner
+                B = self.rotatedRectCorners[next]
+                C = (checkPoint[0][0], checkPoint[0][1])
+                D = (checkPoint[1][0], chechkPoint[1][1])
+
+                crash = intersect(A,B,C,D)
+                return crash
+
 
     #Applys the brake to the car
     def speed(self):

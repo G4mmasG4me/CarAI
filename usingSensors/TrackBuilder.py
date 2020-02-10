@@ -105,13 +105,17 @@ class Track():
     def saveOrSwapTrack(self):
         if self.currentTrack == self.track1:
             if self.track1:
-                self.track1.pop()
+                if choice2 == 1:
+                    self.track1.pop()
             self.currentTrack = self.track2
-        else:
+        elif self.currentTrack == self.track2:
             if self.track2:
-                self.track2.pop()
+                if choice2 == 1:
+                    self.track2.pop()
+        else:
+            if 
             track = self.track1 + self.track2
-            np.save(filename, track)
+            np.savez(filename, track1=self.track1, track2=self.track2, chechpoints=self.checkpoints)
             running = False
             quit()
             pygame.quit()
