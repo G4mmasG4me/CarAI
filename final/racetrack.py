@@ -11,6 +11,7 @@ class RaceTrack():
     def __init__(self):
         self.filename = 'tracks/trainingtrack.npy'
         self.track = np.load(self.filename, allow_pickle=True)
+        self.track = self.track.tolist()
 
     def update(self, MainRun):
         for wall in self.track:

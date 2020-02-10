@@ -1,6 +1,9 @@
 import pygame
 import math
 import numpy as np
+import os
+os.environ['SDL_VIDEO_WINDOW_POS'] = '0,25'
+#Objects
 from car import Car
 from racetrack import RaceTrack
 from sensors import Sensors
@@ -20,6 +23,17 @@ red = (255,0,0)
 green = (0,255,0)
 blue = (0,0,255)
 
+#DQN Variables
+EPISODES = 1000
+WALL_PENALTY = 50
+CHECKPOINT_REWARD = 10
+
+epsilon = 0.9
+EPS_DECAY = 0.9999
+
+ALPHA = 0.1 #Learning Rate
+GAMMA = 0.9 #Discount Factor
+
 class Main():
     def __init__(self):
         self.displayWidth = 800
@@ -37,34 +51,11 @@ class Main():
         sensors = Sensors(car)
         raceTrack = RaceTrack()
         while self.running:
-            print(self.clock.get_fps())
-            #print('Mouse:', pygame.mouse.get_pos())
-            #print(car.velocity)
-            #print(self.deltatime)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                     pygame.quit()
                     quit()
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP]:
-                if car.velocity < 0:
-                    car.brake += car.accelerateBrake
-                else:
-                    car.velocity += car.accelerate
-            if keys[pygame.K_LEFT]:
-                if car.velocity != 0:
-                    car.angle += car.steeringAngle * self.deltatime
-                    car.brake += car.steeringBrake
-            if keys[pygame.K_RIGHT]:
-                if car.velocity != 0:
-                    car.angle -= car.steeringAngle * self.deltatime
-                    car.brake += car.steeringBrake
-            if keys[pygame.K_DOWN]:
-                if car.velocity > 0:
-                    car.brake += car.decelerateBrake
-                else:
-                    car.velocity -= car.decelerate
 
             self.display.fill(white)
             car.update(self, raceTrack)

@@ -50,7 +50,8 @@ Each cell in this table records a value called a Q-Value
 representation of long-term reward an agent would receive if it takes this action
 
 ---Variables---
--Gamma - Discount factor - Lower values get better short term gains. Higher values get better long term gains.
+-ALPHA - Learning Rate -
+-Gamma - Discount Factor - Lower values get better short term gains. Higher values get better long term gains.
 
 ---Observation---
 0 : Angle
@@ -67,10 +68,10 @@ representation of long-term reward an agent would receive if it takes this actio
 11 : Front Left 1 Sensor
 
 ---Actions---
-0 : rotate anti-clockwise
-1 : rotate clockwise
-2 : accelerate
-3 : decelerate
+0 : accelerate
+1 : decelerate
+2 : turn left
+3 : turn right
 
 ---Reset---
 Restarts Environment
@@ -80,7 +81,6 @@ Returns:
 -Observation
 -rewards
 -done
--info
 
 --Render---
 Renders Environment

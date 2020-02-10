@@ -25,27 +25,53 @@ class Sensors():
 
     #Sets the position of the start of the sensor
     def startCoord(self, Car):
-        self.sensors['front'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
-        self.sensors['frontright1'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
-        self.sensors['frontright2'][0] = Car.rotatedRectCorners[1]
-        self.sensors['right'][0] = ((Car.rotatedRectCorners[1][0] + Car.rotatedRectCorners[2][0]) / 2, (Car.rotatedRectCorners[1][1] + Car.rotatedRectCorners[2][1]) / 2)
-        self.sensors['backright1'][0] = ((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, (Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2)
-        self.sensors['back'][0] = ((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, (Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2)
-        self.sensors['backleft1'][0] = ((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, (Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2)
-        self.sensors['left'][0] = ((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[0][0]) / 2, (Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[0][1]) / 2)
-        self.sensors['frontleft2'][0] = Car.rotatedRectCorners[0]
-        self.sensors['frontleft1'][0] = ((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, (Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2)
+        self.sensors['front'][0] = (round((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, 0), round((Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2, 0))
+        self.sensors['frontright1'][0] = (round((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, 0), round((Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2, 0))
+        self.sensors['frontright2'][0] = (round(Car.rotatedRectCorners[1][0], 0), round(Car.rotatedRectCorners[1][1], 0))
+        self.sensors['right'][0] = (round((Car.rotatedRectCorners[1][0] + Car.rotatedRectCorners[2][0]) / 2, 0), round((Car.rotatedRectCorners[1][1] + Car.rotatedRectCorners[2][1]) / 2, 0))
+        self.sensors['backright1'][0] = (round((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, 0), round((Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2, 0))
+        self.sensors['back'][0] = (round((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, 0), round((Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2, 0))
+        self.sensors['backleft1'][0] = (round((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[2][0]) / 2, 0), round((Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[2][1]) / 2, 0))
+        self.sensors['left'][0] = (round((Car.rotatedRectCorners[3][0] + Car.rotatedRectCorners[0][0]) / 2, 0), round((Car.rotatedRectCorners[3][1] + Car.rotatedRectCorners[0][1]) / 2, 0))
+        self.sensors['frontleft2'][0] = (round(Car.rotatedRectCorners[0][0], 0), round(Car.rotatedRectCorners[0][1], 0))
+        self.sensors['frontleft1'][0] = (round((Car.rotatedRectCorners[0][0] + Car.rotatedRectCorners[1][0]) / 2, 0), round((Car.rotatedRectCorners[0][1] + Car.rotatedRectCorners[1][1]) / 2, 0))
 
     #Sets the position of the end of the sensor
     def sensorValues(self, Car):
-        for i in self.sensors:
-            self.sensors[i][1] = ((round((math.cos(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][0], 0)), (round((math.sin(math.radians(self.sensors[i][2] + -Car.angle)) * self.length) + self.sensors[i][0][1], 0)))
+        for sensor in self.sensors:
+            x = round((math.cos(math.radians(self.sensors[sensor][2] + -Car.angle)) * self.length) + self.sensors[sensor][0][0], 0)
+            y = round((math.sin(math.radians(self.sensors[sensor][2] + -Car.angle)) * self.length) + self.sensors[sensor][0][1], 0)
+            self.sensors[sensor][1] = (x, y)
 
     #Calculates the intercept between the track and the sensor
     def intercept(self, RaceTrack, Main):
         #Calculating function
-        def det(a, b):
-            return a[0] * b[1] - a[1] * b[0]
+        def line(p1, p2):
+            A = (p1[1] - p2[1])
+            B = (p2[0] - p1[0])
+            C = (p1[0]*p2[1] - p2[0]*p1[1])
+            return A, B, -C
+
+        def intersection(L1, L2):
+            D  = L1[0] * L2[1] - L1[1] * L2[0]
+            Dx = L1[2] * L2[1] - L1[1] * L2[2]
+            Dy = L1[0] * L2[2] - L1[2] * L2[0]
+            if D != 0:
+                x = Dx / D
+                y = Dy / D
+                return (x,y)
+            else:
+                return False
+
+        def betweenCoords(interceptPoint, line1, line2):
+
+            if (min(line1[0][0], line1[1][0]) <= round(interceptPoint[0], 0) <= max(line1[0][0], line1[1][0], 0)
+            and min(line1[0][1], line1[1][1]) <= round(interceptPoint[1], 0) <= max(line1[0][1], line1[1][1], 0)
+            and min(line2[0][0], line2[1][0]) <= round(interceptPoint[0], 0) <= max(line2[0][0], line2[1][0], 0)
+            and min(line2[0][1], line2[1][1]) <= round(interceptPoint[1], 0) <= max(line2[0][1], line2[1][1], 0)):
+                return interceptPoint
+            else:
+                return False
 
         for sensor in self.sensors:
             self.sensors[sensor][3] = (1000,1000)
@@ -53,47 +79,25 @@ class Sensors():
 
         for trackLine in RaceTrack.track:
             for sensor in self.sensors:
-                xdiff = (trackLine[0][0] - trackLine[1][0], self.sensors[sensor][0][0] - self.sensors[sensor][1][0])
-                ydiff = (trackLine[0][1] - trackLine[1][1], self.sensors[sensor][0][1] - self.sensors[sensor][1][1])
 
-                div = det(xdiff, ydiff)
+                trackLineEquation = line(trackLine[0], trackLine[1])
+                sensorLineEquation = line(self.sensors[sensor][0], self.sensors[sensor][1])
 
-                d = (det(trackLine[0], trackLine[1]), det(self.sensors[sensor][0], self.sensors[sensor][1]))
+                interceptPoint = intersection(trackLineEquation, sensorLineEquation)
+                if interceptPoint:
+                    interceptPoint = betweenCoords(interceptPoint, trackLine, (self.sensors[sensor][0], self.sensors[sensor][1]))
 
-                x = det(d, xdiff) / div
-                y = det(d, ydiff) / div
-                if math.isnan(x) or math.isinf(x) or math.isnan(y) or math.isinf(y):
-                    x = 0
-                    y = 0
-                x = int(round(x, 0))
-                y = int(round(y, 0))
+                if interceptPoint:
+                    interceptDistance = math.sqrt((self.sensors[sensor][0][0] - interceptPoint[0])**2 + (self.sensors[sensor][0][1] - interceptPoint[1])**2)
 
-                line1Xmin = min(int(trackLine[0][0]), int(trackLine[1][0]))
-                line1Xmax = max(int(trackLine[0][0]), int(trackLine[1][0]))
-                line1Ymin = min(int(trackLine[0][1]), int(trackLine[1][1]))
-                line1Ymax = max(int(trackLine[0][1]), int(trackLine[1][1]))
-                line2Xmin = min(int(self.sensors[sensor][0][0]), int(self.sensors[sensor][1][0]))
-                line2Xmax = max(int(self.sensors[sensor][0][0]), int(self.sensors[sensor][1][0]))
-                line2Ymin = min(int(self.sensors[sensor][0][1]), int(self.sensors[sensor][1][1]))
-                line2Ymax = max(int(self.sensors[sensor][0][1]), int(self.sensors[sensor][1][1]))
-
-                if not x >= line1Xmin or not x <= line1Xmax or not y >= line1Ymin or not y <= line1Ymax:
-                    x = 0
-                    y = 0
-                if not x >= line2Xmin or not x <= line2Xmax or not y >= line2Ymin or not y <= line2Ymax:
-                    x = 0
-                    y = 0
-
-                intercept = (x, y)
-                if intercept != (0,0):
-                    interceptDistance = math.sqrt((self.sensors[sensor][0][0] - intercept[0])**2 + (self.sensors[sensor][0][1] - intercept[1])**2)
                     if interceptDistance < self.sensors[sensor][4]:
-                        self.sensors[sensor][3] = intercept
-                        self.sensors[sensor][4] = interceptDistance
-                        self.sensors[sensor][1] = intercept
+                        self.sensors[sensor][3] = (int(interceptPoint[0]), int(interceptPoint[1]))
+                        self.sensors[sensor][4] = int(interceptDistance)
+                        self.sensors[sensor][1] = interceptPoint
 
     #Draws the intercept point
     def drawIntercept(self, Main):
+        pass
         for sensor in self.sensors:
             pygame.draw.circle(Main.display, red, self.sensors[sensor][3], 4)
 

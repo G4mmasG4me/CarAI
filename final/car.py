@@ -23,11 +23,35 @@ class Car():
         #Driving Values
         self.accelerate = 0.002
         self.decelerate = 0.001
-        self.steeringAngle = 0.08
+        self.steeringAngle = 0.1
         self.steeringBrake = 0.0001
         self.accelerateBrake = 0.001
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
+
+    def action():
+        #accelerate
+        if choice == 0:
+            if car.velocity < 0:
+                car.brake += car.accelerateBrake
+            else:
+                car.velocity += car.accelerate
+        #decelerate
+        if choice == 1:
+            if car.velocity > 0:
+                car.brake += car.decelerateBrake
+            else:
+                car.velocity -= car.decelerate
+        #turn left
+        if choice == 2:
+            if car.velocity != 0:
+                car.angle += car.steeringAngle * self.deltatime
+                car.brake += car.steeringBrake
+        #turn right
+        if choice == 3:
+            if car.velocity != 0:
+                car.angle -= car.steeringAngle * self.deltatime
+                car.brake += car.steeringBrake
 
     #Detects if it collides
     def collision(self, RaceTrack):
@@ -104,6 +128,5 @@ class Car():
         self.nonRotatedRect() #Gets the non rotated rect
         self.rotatedRect() #Gets the rotated rect
         self.collision(RaceTrack)
-        self.drawRect(Main) #Draws the rect
-        print(self.angle)
+        #self.drawRect(Main) #Draws the rect
         Main.display.blit(self.rotatedCar, self.carRect) #Displays it all
