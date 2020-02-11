@@ -55,6 +55,7 @@ class Main():
     def main(self):
         epsilon = 0.9
         for episode in range(EPISODES):
+            reward = 0
             print('EP:', episode)
             car = Car()
             raceTrack = RaceTrack()
@@ -84,27 +85,26 @@ class Main():
                     #Car Collides with Wall
                     reward = -WALL_PENALTY
                     print('Crash')
+                    break
                 elif car.checkpointCollision(raceTrack) == True:
                     #Car Colldies with Checkpoint
-                    reward = CHECKPOINT_REWARD
+                    reward += CHECKPOINT_REWARD
                     print('Gone Through Checkpoint')
+                    print(reward)
                 else:
+                    reward = reward
                     #Car Doesn't Collide
                     #Could implement a movement penalty
-                    reward = 0
 
                 new_state = (car.x, car.y)
                 max_future_q = np.max(Q[new_state])
                 current_q = Q[state][action]
 
-                if reward == CHECKPOINT_REWARD:
-                    new_q = CHECKPOINT_REWARD
+                if reward > 0:
+                    new_q = reward
                 else:
                     new_q = (1 - ALPHA) * current_q + ALPHA * (reward + GAMMA * max_future_q)
-                Q[state][action] = new_q
-
-                if reward == -WALL_PENALTY:
-                    break
+                Q[state][action] = 
 
             epsilon *=EPSILON_DECAY
 
