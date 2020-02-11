@@ -1,5 +1,7 @@
 import pygame
 import numpy as np
+from itertools import cycle
+
 pygame.init()
 
 black = (0,0,0)
@@ -42,35 +44,37 @@ class Track():
     def __init__(self):
         self.track1 = []
         self.track2 = []
+        self.checkpoints = []
         self.currentTrack = self.track1
         self.i = 1
         if choice1 == 2:
-            self.track = np.load('tracks/' + filename + '.npy', allow_pickle=True)
+            self.track = np.load('tracks/' + filename + '.npz', allow_pickle=True)
+            self.track1 = self.track['track1']
+            self.track2 = self.track['track2']
+            self.checkpoints = self.track['checkpoints']
 
     #Sets the position of the line, while you move the mouse
-    def getTrack(self, mouse):
+    def getDisconnectedTrack(self, mouse):
+        if self.i == 2:
+            self.currentTrack[-1][1] = mouse.pos
+
+    def getConnectedTrack(self, mouse):
         if self.currentTrack: #if list not empty
             if self.currentTrack[-1][0]:
-                if choice2 == 2 and self.i == 2:
-                    print(self.currentTrack)
-                    print(self.currentTrack[-1])
-                    self.currentTrack[-1][1] = mouse.pos
-                elif choice2 == 1:
-                    self.currentTrack[-1][1] = mouse.pos
+                self.currentTrack[-1][1] = mouse.pos
 
     #Places the track when you click
-    def placeTrack(self, mouse):
-        print(self.currentTrack)
+    def placeDisconnectedTrack(self, mouse):
+        if self.i == 1:
+            self.currentTrack.append([mouse.pos])
+            self.currentTrack[-1].append([mouse.pos])
+            self.i = 2
+        elif self.i == 2:
+            self.i = 1
+
+    def placeConnectedTrack(self, mouse):
         if choice2 == 1:
             self.currentTrack.append([mouse.pos, ()])
-        elif choice2 == 2:
-            if self.i == 1:
-                self.currentTrack.append([mouse.pos])
-                self.currentTrack[-1].append([mouse.pos])
-                self.i = 2
-            elif self.i == 2:
-                self.currentTrack[-1].append(mouse.pos)
-                self.i = 1
 
     #Draws all the lines of the track
     def drawTrack(self):
@@ -79,12 +83,18 @@ class Track():
             pygame.draw.line(display, black, wall[0], wall[1])
         for wall in self.track2:
             pygame.draw.line(display, black, wall[0], wall[1])
+        for wall in self.checkpoints:
+            pygame.draw.line(display, green, wall[0], wall[1])
 
     #If you want to view the track, it the whole thing
     def drawFinishedTrack(self):
         display.fill(white)
-        for wall in self.track:
+        for wall in self.track1:
             pygame.draw.line(display, black, wall[0], wall[1])
+        for wall in self.track2:
+            pygame.draw.line(display, black, wall[0], wall[1])
+        for wall in self.checkpoints:
+            pygame.draw.line(display, green, wall[0], wall[1])
 
     #Removes the last set line
     def removeLast(self):
@@ -99,6 +109,8 @@ class Track():
             self.track1 = []
         if self.track2:
             self.track2 = []
+        if self.checkpoints:
+            self.checkpoints = []
         self.currentTrack = self.track1
 
     #Used so that you can swap between the track sides, and also save the track
@@ -108,14 +120,16 @@ class Track():
                 if choice2 == 1:
                     self.track1.pop()
             self.currentTrack = self.track2
+            self.i = 1
         elif self.currentTrack == self.track2:
             if self.track2:
                 if choice2 == 1:
                     self.track2.pop()
+            self.currentTrack = self.checkpoints
+            self.i = 1
+
         else:
-            if 
-            track = self.track1 + self.track2
-            np.savez(filename, track1=self.track1, track2=self.track2, chechpoints=self.checkpoints)
+            np.savez(filename, track1=self.track1, track2=self.track2, checkpoints=self.checkpoints)
             running = False
             quit()
             pygame.quit()
@@ -136,11 +150,14 @@ while running == True:
             quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                print("Left Mouse Button Down")
                 if choice1 == 1:
-                    track.placeTrack(mouse)
+                    if choice2 == 1 and track.currentTrack != track.checkpoints:
+                        track.placeConnectedTrack(mouse)
+                        print(track.currentTrack)
+                    elif choice2 == 2 or track.currentTrack == track.checkpoints:
+                        track.placeDisconnectedTrack(mouse)
+                        print(track.currentTrack)
             elif event.button == 3:
-                print("Right Mouse Button Down")
                 if choice1 == 1:
                     track.removeLast()
         elif event.type == pygame.KEYDOWN:
@@ -150,11 +167,13 @@ while running == True:
                 track.removeAll()
     mouse.getPos()
     if choice1 == 1:
-        track.getTrack(mouse)
+        if choice2 == 1 and track.currentTrack != track.checkpoints:
+            track.getConnectedTrack(mouse)
+        elif choice2 == 2 or track.currentTrack == track.checkpoints:
+            track.getDisconnectedTrack(mouse)
         track.drawTrack()
-        text.update(mouse)
     elif choice1 == 2:
         track.drawFinishedTrack()
-        text.update(mouse)
+    text.update(mouse)
     pygame.display.update()
     clock.tick(60)

@@ -12,8 +12,8 @@ class Car():
     def __init__(self):
         self.startX = 75
         self.startY = 400
-        self.x = 75
-        self.y = 400
+        self.x = self.startX
+        self.y = self.startY
         self.carImg = pygame.image.load('images/bugatti.png')
         self.carImg = pygame.transform.scale(self.carImg, (10, 20))
         self.angle = 0
@@ -29,7 +29,7 @@ class Car():
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
 
-    def action(self, choice):
+    def actionMove(self, choice, main):
         #accelerate
         if choice == 0:
             if self.velocity < 0:
@@ -44,17 +44,18 @@ class Car():
                 self.velocity -= self.decelerate
         #turn left
         if choice == 2:
-            if car.velocity != 0:
-                car.angle += car.steeringAngle * self.deltatime
-                car.brake += car.steeringBrake
+            if self.velocity != 0:
+                self.angle += self.steeringAngle * main.deltatime
+                self.brake += self.steeringBrake
         #turn right
         if choice == 3:
-            if car.velocity != 0:
-                car.angle -= car.steeringAngle * self.deltatime
-                car.brake += car.steeringBrake
+            if self.velocity != 0:
+                self.angle -= self.steeringAngle * main.deltatime
+                self.brake += self.steeringBrake
 
     #Detects if it collides
     def wallCollision(self, RaceTrack):
+        totalCrash = False
         for z, corner in enumerate(self.rotatedRectCorners):
             for track in RaceTrack.track:
                 def ccw(A,B,C):
@@ -65,7 +66,7 @@ class Car():
                     return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
 
                 next = z + 1
-                if next > len(self.rotatedRectCorners)-1:
+                if next == len(self.rotatedRectCorners):
                     next -= len(self.rotatedRectCorners)
                 A = corner
                 B = self.rotatedRectCorners[next]
@@ -73,28 +74,34 @@ class Car():
                 D = (track[1][0], track[1][1])
 
                 crash = intersect(A,B,C,D)
-                return crash
+                if crash == True:
+                    totalCrash = True
+        return totalCrash
 
     def checkpointCollision(self, RaceTrack):
         for z, corner in enumerate(self.rotatedRectCorners):
-            for checkPoint in RaceTrack.checkPoint:
-                def ccw(A,B,C):
-                    return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
+            checkpoint = RaceTrack.checkpoints[RaceTrack.pos]
+            def ccw(A,B,C):
+                return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
 
                 # Return true if line segments AB and CD intersect
-                def intersect(A,B,C,D):
-                    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+            def intersect(A,B,C,D):
+                return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
 
-                next = z + 1
-                if next > len(self.rotatedRectCorners)-1:
-                    next -= len(self.rotatedRectCorners)
-                A = corner
-                B = self.rotatedRectCorners[next]
-                C = (checkPoint[0][0], checkPoint[0][1])
-                D = (checkPoint[1][0], chechkPoint[1][1])
+            next = z + 1
+            if next > len(self.rotatedRectCorners)-1:
+                next -= len(self.rotatedRectCorners)
+            A = corner
+            B = self.rotatedRectCorners[next]
+            C = (checkpoint[0][0], checkpoint[0][1])
+            D = (checkpoint[1][0], checkpoint[1][1])
 
-                crash = intersect(A,B,C,D)
-                return crash
+            crash = intersect(A,B,C,D)
+            if crash == True:
+                RaceTrack.pos += 1
+                if RaceTrack.pos > len(RaceTrack.checkpoints)-1:
+                    RaceTrack.pos -= len(RaceTrack.checkpoints)
+            return crash
 
 
     #Applys the brake to the car
@@ -112,6 +119,8 @@ class Car():
         self.angle = round(self.angle, 2)
         self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
         self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
+        self.x = int(round(self.x, 0))
+        self.y = int(round(self.y, 0))
 
     #Gets the rect of the car
     def nonRotatedRect(self):
@@ -144,6 +153,5 @@ class Car():
         self.move(Main) #Moves it
         self.nonRotatedRect() #Gets the non rotated rect
         self.rotatedRect() #Gets the rotated rect
-        self.collision(RaceTrack)
         #self.drawRect(Main) #Draws the rect
         Main.display.blit(self.rotatedCar, self.carRect) #Displays it all

@@ -47,30 +47,47 @@ class Main():
         self.display = pygame.display.set_mode((self.displayWidth,self.displayHeight))
         pygame.display.set_caption(self.title)
         self.clock = pygame.time.Clock()
+        self.deltatime = self.clock.tick(60)
         self.running = True
         self.main()
+
 
     def main(self):
         epsilon = 0.9
         for episode in range(EPISODES):
+            print('EP:', episode)
             car = Car()
             raceTrack = RaceTrack()
             while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+
                 state = (car.x, car.y)
                 if random.uniform(0,1) < epsilon:
                     #Explore
                     action = np.random.randint(action_size)
                 else:
                     #Exploit
-                    action = np.argmax[Q[state]]
-                car.action(action)
+                    action = np.argmax(Q[state])
+                car.actionMove(action, self)
 
-                if car.wallCollision:
+                self.display.fill(white)
+                car.update(self, raceTrack)
+                raceTrack.update(self)
+                pygame.display.update()
+                self.deltatime = self.clock.tick(60)
+
+                crash = car.wallCollision(raceTrack)
+                if crash == True:
                     #Car Collides with Wall
                     reward = -WALL_PENALTY
-                elif car.checkpointCollision:
+                    print('Crash')
+                elif car.checkpointCollision(raceTrack) == True:
                     #Car Colldies with Checkpoint
                     reward = CHECKPOINT_REWARD
+                    print('Gone Through Checkpoint')
                 else:
                     #Car Doesn't Collide
                     #Could implement a movement penalty
@@ -86,14 +103,7 @@ class Main():
                     new_q = (1 - ALPHA) * current_q + ALPHA * (reward + GAMMA * max_future_q)
                 Q[state][action] = new_q
 
-                self.display.fill(white)
-                car.update(self, raceTrack)
-                sensors.update(car, raceTrack, self)
-                raceTrack.update(self)
-                pygame.display.update()
-                self.deltatime = self.clock.tick(60)
-
-                if reward == WALL_PENALTY:
+                if reward == -WALL_PENALTY:
                     break
 
             epsilon *=EPSILON_DECAY
