@@ -30,7 +30,7 @@ WALL_PENALTY = 50
 CHECKPOINT_REWARD = 10
 
 epsilon = 0.9
-EPSILON_DECAY = 0.9999
+EPSILON_DECAY = 0.999
 
 ALPHA = 0.1 #Learning Rate
 GAMMA = 0.9 #Discount Factor
@@ -56,7 +56,7 @@ class Main():
         epsilon = 0.9
         for episode in range(EPISODES):
             reward = 0
-            print('EP:', episode)
+            print('Start | EP:', episode, '| Epsilon:', epsilon)
             car = Car()
             raceTrack = RaceTrack()
             while True:
@@ -65,13 +65,14 @@ class Main():
                         pygame.quit()
                         exit()
 
-                state = (car.x, car.y)
-                if random.uniform(0,1) < epsilon:
+                state = (int(round(car.x, 0)), int(round(car.y, 0)))
+                if random.uniform(0,1) > epsilon:
                     #Explore
                     action = np.random.randint(action_size)
                 else:
                     #Exploit
                     action = np.argmax(Q[state])
+
                 car.actionMove(action, self)
 
                 self.display.fill(white)
@@ -83,20 +84,14 @@ class Main():
                 crash = car.wallCollision(raceTrack)
                 if crash == True:
                     #Car Collides with Wall
-                    reward = -WALL_PENALTY
-                    print('Crash')
+                    reward -= WALL_PENALTY
                     break
-                elif car.checkpointCollision(raceTrack) == True:
+                checkpoint = car.checkpointCollision(raceTrack)
+                if checkpoint == True:
                     #Car Colldies with Checkpoint
                     reward += CHECKPOINT_REWARD
-                    print('Gone Through Checkpoint')
-                    print(reward)
-                else:
-                    reward = reward
-                    #Car Doesn't Collide
-                    #Could implement a movement penalty
 
-                new_state = (car.x, car.y)
+                new_state = (int(round(car.x, 0)), int(round(car.y, 0)))
                 max_future_q = np.max(Q[new_state])
                 current_q = Q[state][action]
 
@@ -104,8 +99,9 @@ class Main():
                     new_q = reward
                 else:
                     new_q = (1 - ALPHA) * current_q + ALPHA * (reward + GAMMA * max_future_q)
-                Q[state][action] = 
+                Q[state][action] = new_q
 
+            print('End | EP:', episode, '| Score:', reward)
             epsilon *=EPSILON_DECAY
 
 if __name__ == '__main__':

@@ -79,6 +79,7 @@ class Car():
         return totalCrash
 
     def checkpointCollision(self, RaceTrack):
+        totalCrash = False
         for z, corner in enumerate(self.rotatedRectCorners):
             checkpoint = RaceTrack.checkpoints[RaceTrack.pos]
             def ccw(A,B,C):
@@ -91,17 +92,19 @@ class Car():
             next = z + 1
             if next > len(self.rotatedRectCorners)-1:
                 next -= len(self.rotatedRectCorners)
-            A = corner
-            B = self.rotatedRectCorners[next]
+            A = (corner[0], corner[1])
+            B = (self.rotatedRectCorners[next][0], self.rotatedRectCorners[next][1])
             C = (checkpoint[0][0], checkpoint[0][1])
             D = (checkpoint[1][0], checkpoint[1][1])
 
             crash = intersect(A,B,C,D)
+
             if crash == True:
+                totalCrash = True
                 RaceTrack.pos += 1
                 if RaceTrack.pos > len(RaceTrack.checkpoints)-1:
                     RaceTrack.pos -= len(RaceTrack.checkpoints)
-            return crash
+        return totalCrash
 
 
     #Applys the brake to the car
@@ -119,8 +122,6 @@ class Car():
         self.angle = round(self.angle, 2)
         self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
         self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
-        self.x = int(round(self.x, 0))
-        self.y = int(round(self.y, 0))
 
     #Gets the rect of the car
     def nonRotatedRect(self):
