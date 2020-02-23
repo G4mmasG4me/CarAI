@@ -2,11 +2,7 @@ import pygame
 import math
 
 #Colours
-black = (0,0,0)
-white = (255,255,255)
-red = (255,0,0)
-green = (0,255,0)
-blue = (0,0,255)
+from colors import *
 
 class Sensors():
     def __init__(self, Car):#Start(0), End(1), Angle(2), Intercept(3), Intercept Distance(4)
@@ -44,7 +40,7 @@ class Sensors():
             self.sensors[sensor][1] = (x, y)
 
     #Calculates the intercept between the track and the sensor
-    def intercept(self, RaceTrack, Main):
+    def intercept(self, RaceTrack):
         #Calculating function
         def line(p1, p2):
             A = (p1[1] - p2[1])
@@ -95,21 +91,14 @@ class Sensors():
                         self.sensors[sensor][4] = int(interceptDistance)
                         self.sensors[sensor][1] = interceptPoint
 
-    #Draws the intercept point
-    def drawIntercept(self, Main):
-        pass
+    #Draws the sensors
+    def drawSensors(self, Env):
         for sensor in self.sensors:
-            pygame.draw.circle(Main.display, red, self.sensors[sensor][3], 4)
-
-    #Draws the sensor line
-    def createSensors(self, Main):
-        for sensor in self.sensors:
-            pygame.draw.line(Main.display, black, self.sensors[sensor][0], self.sensors[sensor][1])
+            pygame.draw.line(Env.display, black, self.sensors[sensor][0], self.sensors[sensor][1])
+            pygame.draw.circle(Env.display, red, self.sensors[sensor][3], 4)
 
     #Calls all the functions
-    def update(self, Car, RaceTrack, Main):
+    def update(self, Car, RaceTrack):
         self.startCoord(Car)
         self.sensorValues(Car)
-        self.intercept(RaceTrack, Main)
-        self.drawIntercept(Main)
-        self.createSensors(Main)
+        self.intercept(RaceTrack)

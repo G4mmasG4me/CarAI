@@ -29,7 +29,7 @@ class Car():
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
 
-    def actionMove(self, choice, main):
+    def actionMove(self, choice, Env):
         #accelerate
         if choice == 0:
             if self.velocity < 0:
@@ -45,12 +45,12 @@ class Car():
         #turn left
         if choice == 2:
             if self.velocity != 0:
-                self.angle += self.steeringAngle * main.deltatime
+                self.angle += self.steeringAngle * Env.deltatime
                 self.brake += self.steeringBrake
         #turn right
         if choice == 3:
             if self.velocity != 0:
-                self.angle -= self.steeringAngle * main.deltatime
+                self.angle -= self.steeringAngle * Env.deltatime
                 self.brake += self.steeringBrake
 
     #Detects if it collides
@@ -116,12 +116,12 @@ class Car():
         self.brake = self.naturalBrake
 
     #Calculates which way to move and how much
-    def move(self, Main):
+    def move(self, Env):
         self.velocity = 0.0005 * round(self.velocity/0.0005)
         self.velocity = round(self.velocity, 5)
         self.angle = round(self.angle, 2)
-        self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
-        self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Main.deltatime
+        self.x += math.cos(math.radians(-self.angle-90)) * self.velocity * Env.deltatime
+        self.y += math.sin(math.radians(-self.angle-90)) * self.velocity * Env.deltatime
 
     #Gets the rect of the car
     def nonRotatedRect(self):
@@ -141,18 +141,12 @@ class Car():
         bl = (((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.cos(math.radians(-self.angle))) - ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.sin(math.radians(-self.angle))) + self.center[0], ((self.nonRotatedRectCorners[3][0] - self.center[0]) * math.sin(math.radians(-self.angle))) + ((self.nonRotatedRectCorners[3][1] - self.center[1]) * math.cos(math.radians(-self.angle))) + self.center[1])
         self.rotatedRectCorners = [tl, tr, br, bl]
 
-    #Draws the rect around the car (Not needed)
-    def drawRect(self, Main):
-        pygame.draw.line(Main.display, (255,0,0), self.rotatedRectCorners[0], self.rotatedRectCorners[1])
-        pygame.draw.line(Main.display, (0,255,0), self.rotatedRectCorners[1], self.rotatedRectCorners[2])
-        pygame.draw.line(Main.display, (0,0,255), self.rotatedRectCorners[2], self.rotatedRectCorners[3])
-        pygame.draw.line(Main.display, (0,0,0), self.rotatedRectCorners[3], self.rotatedRectCorners[0])
+    def drawCar(self, Env):
+        Env.display.blit(self.rotatedCar, self.carRect) #Displays it all
 
     #Calls all the functions as well as blitting it to the screen
-    def update(self, Main, RaceTrack):
+    def update(self, Env, RaceTrack):
         self.speed() #Gets velocity
-        self.move(Main) #Moves it
+        self.move(Env) #Moves it
         self.nonRotatedRect() #Gets the non rotated rect
         self.rotatedRect() #Gets the rotated rect
-        #self.drawRect(Main) #Draws the rect
-        Main.display.blit(self.rotatedCar, self.carRect) #Displays it all

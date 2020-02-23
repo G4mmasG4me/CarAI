@@ -18,26 +18,25 @@ file = 'TokyoDrift.mp3'
 #pygame.mixer.music.play()
 
 #Colours
-black = (0,0,0)
-white = (255,255,255)
-red = (255,0,0)
-green = (0,255,0)
-blue = (0,0,255)
+from colors import *
 
 #DQN Variables
-EPISODES = 1000
+EPISODES = 10000
 WALL_PENALTY = 50
 CHECKPOINT_REWARD = 10
 
-epsilon = 0.9
+epsilon = 0.99
 EPSILON_DECAY = 0.999
 
-ALPHA = 0.1 #Learning Rate
+ALPHA = 1 #Learning Rate
 GAMMA = 0.9 #Discount Factor
 
-state_size = [800, 800]
+state_size = (200, 200)
 action_size = 4
-Q = np.zeros(state_size +  [action_size])
+
+#Q = np.zeros(state_size +  [action_size])
+Q = np.zeros(state_size +  (action_size,), dtype=float)
+
 
 class Main():
     def __init__(self):
@@ -65,13 +64,13 @@ class Main():
                         pygame.quit()
                         exit()
 
-                state = (int(round(car.x, 0)), int(round(car.y, 0)))
-                if random.uniform(0,1) > epsilon:
+                before_action_state = (int(round(car.x, 0) / 4), int(round(car.y, 0) / 4))
+                if random.uniform(0,1) < epsilon:
                     #Explore
                     action = np.random.randint(action_size)
                 else:
                     #Exploit
-                    action = np.argmax(Q[state])
+                    action = np.argmax(Q[before_action_state])
 
                 car.actionMove(action, self)
 
@@ -91,17 +90,12 @@ class Main():
                     #Car Colldies with Checkpoint
                     reward += CHECKPOINT_REWARD
 
-                new_state = (int(round(car.x, 0)), int(round(car.y, 0)))
-                max_future_q = np.max(Q[new_state])
-                current_q = Q[state][action]
+                after_action_state = (int(round(car.x, 0) / 4), int(round(car.y, 0) / 4))
+                best_q = np.amax(Q[after_action_state])
 
-                if reward > 0:
-                    new_q = reward
-                else:
-                    new_q = (1 - ALPHA) * current_q + ALPHA * (reward + GAMMA * max_future_q)
-                Q[state][action] = new_q
+                Q[before_action_state + (action,)] = ALPHA * (reward + GAMMA * best_q)
 
-            print('End | EP:', episode, '| Score:', reward)
+            print('End | EP:', episode, '| Score:', reward, '\n')
             epsilon *=EPSILON_DECAY
 
 if __name__ == '__main__':

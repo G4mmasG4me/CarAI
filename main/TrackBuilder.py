@@ -4,11 +4,7 @@ from itertools import cycle
 
 pygame.init()
 
-black = (0,0,0)
-white = (255,255,255)
-red = (255,0,0)
-green = (0,255,0)
-blue = (0,0,255)
+from colors import *
 
 #You can choose whether you want to to draw or view a track
 choice1 = int(input('1.Draw Track 2.View Track'))
