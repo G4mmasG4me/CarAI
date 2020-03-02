@@ -5,7 +5,7 @@ import math
 from colors import *
 
 class Sensors():
-    def __init__(self, Car):#Start(0), End(1), Angle(2), Intercept(3), Intercept Distance(4)
+    def __init__(self, Car, Ractrack):#Start(0), End(1), Angle(2), Intercept(3), Intercept Distance(4)
         self.sensors = {'front':[(0,0),(0,0),-90,(-0,-0),-0],
                         'frontright1':[(0,0),(0,0),-70,(0,0),0],
                         'frontright2':[(0,0),(0,0),-45,(0,0),0],
@@ -18,6 +18,7 @@ class Sensors():
                         'frontleft1':[(0,0),(0,0),-110,(0,0),0]}
         self.length = 600
         self.color = blue
+        self.state = [0,0,0,0,0,0,0,0,0,0]
 
     #Sets the position of the start of the sensor
     def startCoord(self, Car):
@@ -91,6 +92,12 @@ class Sensors():
                         self.sensors[sensor][4] = int(interceptDistance)
                         self.sensors[sensor][1] = interceptPoint
 
+
+    def sensorStates(self):
+        for sensor in self.sensors:
+            self.state[list(self.sensors.keys()).index(sensor)] = self.sensors[sensor][4]
+
+
     #Draws the sensors
     def drawSensors(self, Env):
         for sensor in self.sensors:
@@ -102,3 +109,5 @@ class Sensors():
         self.startCoord(Car)
         self.sensorValues(Car)
         self.intercept(RaceTrack)
+        self.sensorStates()
+        return self.state

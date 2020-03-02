@@ -9,7 +9,7 @@ green = (0,255,0)
 blue = (0,0,255)
 
 class Car():
-    def __init__(self):
+    def __init__(self, Env):
         self.startX = 75
         self.startY = 400
         self.x = self.startX
@@ -28,6 +28,7 @@ class Car():
         self.accelerateBrake = 0.001
         self.decelerateBrake = 0.001
         self.naturalBrake = 0.0005
+        self.update(Env)
 
     def actionMove(self, choice, Env):
         #accelerate
@@ -145,8 +146,9 @@ class Car():
         Env.display.blit(self.rotatedCar, self.carRect) #Displays it all
 
     #Calls all the functions as well as blitting it to the screen
-    def update(self, Env, RaceTrack):
+    def update(self, Env):
         self.speed() #Gets velocity
         self.move(Env) #Moves it
         self.nonRotatedRect() #Gets the non rotated rect
         self.rotatedRect() #Gets the rotated rect
+        return self.angle

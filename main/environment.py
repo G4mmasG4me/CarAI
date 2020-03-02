@@ -18,36 +18,42 @@ class Env():
         self.displayWidth = 800
         self.displayHeight = 800
         self.title = 'CarAI'
-        self.display = pygame.display.set_mode((self.displayWidth,self.displayHeight))
-        pygame.display.set_caption(self.title)
-        self.clock = pygame.time.Clock()
-        self.deltatime = self.clock.tick(60)
+        self.deltatime = 1
 
     def reset(self):
-        self.car = Car()
-        self.sensors = Sensors(self.car)
+        self.car = Car(self)
         self.raceTrack = RaceTrack()
+        self.sensors = Sensors(self.car, self.raceTrack)
+
 
     def step(self, action):
         #Action
         self.car.actionMove(action, self)
         #Car Step
-        self.car.speed()
-        self.car.move(self)
-        self.car.nonRotatedRect()
-        self.car.rotatedRect()
+        angle = self.car.update(self)
         #Sensor Step
-        self.sensors.startCoord(self.car)
-        self.sensors.sensorValues(self.car)
-        self.sensors.intercept(self.raceTrack)
+        sensorState = self.sensors.update(self.car, self.raceTrack)
+        state = sensorState + [angle]
+        return state
 
     def render(self):
+        try:
+            self.display
+        except AttributeError:
+            self.display = None
+
+        if self.display is None:
+            self.display = pygame.display.set_mode((self.displayWidth, self.displayHeight))
+            pygame.display.set_caption(self.title)
+            self.clock = pygame.time.Clock()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
                 exit()
-                
+
+        self.deltatime = self.clock.tick(60)
         self.display.fill(white)
         self.raceTrack.update(self)
         self.car.drawCar(self)
