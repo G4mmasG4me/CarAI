@@ -24,6 +24,16 @@ class Env():
         self.car = Car(self)
         self.raceTrack = RaceTrack()
         self.sensors = Sensors(self.car, self.raceTrack)
+        self.car.update()
+        self.sensors.update()
+
+        carState = self.car.getState()
+        sensorState = self.sensor.getState()
+
+        state = sensorState + [carState]
+        state = np.array(state)
+        state = state[np.newaxis, :]
+        return state
 
 
     def step(self, action):
@@ -32,9 +42,22 @@ class Env():
         #Car Step
         angle = self.car.update(self)
         #Sensor Step
-        sensorState = self.sensors.update(self.car, self.raceTrack)
-        state = sensorState + [angle]
-        return state
+        self.sensors.update(self.car, self.raceTrack)
+
+        carState = self.car.getState()
+        sensorState = self.sensor.getState()
+
+        state = sensorState + [carState]
+        state = np.array(state)
+        state = state[np.newaxis, :]
+
+        if self.car.wallCollision(self.env.raceTrack):
+            reward = -50
+            done = True
+        if self.car.checkpointCollision(self.env.raceTrack):
+            reward = 10
+
+        return state, reward, done
 
     def render(self):
         try:

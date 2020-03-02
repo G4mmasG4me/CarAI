@@ -1,4 +1,4 @@
-list = [10, 5, 2]
-number = 15
+done = True
+int = 5
 
-print(list + [number])
+print(int * done)

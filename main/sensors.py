@@ -104,10 +104,12 @@ class Sensors():
             pygame.draw.line(Env.display, black, self.sensors[sensor][0], self.sensors[sensor][1])
             pygame.draw.circle(Env.display, red, self.sensors[sensor][3], 4)
 
+    def getState(self):
+        return self.state
+
     #Calls all the functions
     def update(self, Car, RaceTrack):
         self.startCoord(Car)
         self.sensorValues(Car)
         self.intercept(RaceTrack)
         self.sensorStates()
-        return self.state

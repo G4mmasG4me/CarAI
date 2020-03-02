@@ -145,10 +145,12 @@ class Car():
     def drawCar(self, Env):
         Env.display.blit(self.rotatedCar, self.carRect) #Displays it all
 
+    def getState(self):
+        return self.angle
+
     #Calls all the functions as well as blitting it to the screen
     def update(self, Env):
         self.speed() #Gets velocity
         self.move(Env) #Moves it
         self.nonRotatedRect() #Gets the non rotated rect
         self.rotatedRect() #Gets the rotated rect
-        return self.angle
