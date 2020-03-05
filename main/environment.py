@@ -24,15 +24,17 @@ class Env():
         self.car = Car(self)
         self.raceTrack = RaceTrack()
         self.sensors = Sensors(self.car, self.raceTrack)
-        self.car.update()
-        self.sensors.update()
+        self.car.update(self)
+        self.sensors.update(self.car, self.raceTrack)
 
         carState = self.car.getState()
-        sensorState = self.sensor.getState()
+        sensorState = self.sensors.getState()
 
         state = sensorState + [carState]
         state = np.array(state)
         state = state[np.newaxis, :]
+
+        state = state[0]
         return state
 
 
@@ -45,16 +47,20 @@ class Env():
         self.sensors.update(self.car, self.raceTrack)
 
         carState = self.car.getState()
-        sensorState = self.sensor.getState()
+        sensorState = self.sensors.getState()
 
         state = sensorState + [carState]
         state = np.array(state)
         state = state[np.newaxis, :]
 
-        if self.car.wallCollision(self.env.raceTrack):
+        state = state[0]
+
+        reward = 0
+        done = False
+        if self.car.wallCollision(self.raceTrack):
             reward = -50
             done = True
-        if self.car.checkpointCollision(self.env.raceTrack):
+        if self.car.checkpointCollision(self.raceTrack):
             reward = 10
 
         return state, reward, done

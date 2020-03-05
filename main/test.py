@@ -1,4 +1,5 @@
-done = True
-int = 5
+episode = 125
 
-print(int * done)
+if not episode % 50:
+    print('Now')
+print(episode % 50)
